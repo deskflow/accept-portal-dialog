@@ -21,6 +21,19 @@ Just run the script.
 ./accept-portal-dialog.py
 ```
 
+### Demo
+
+```
+$ accept-portal-dialog
+[2025-08-09 00:29:02] Checking for yDoTool daemon...
+[2025-08-09 00:29:02] Found yDoTool daemon, socket: /run/user/1000/.ydotool_socket
+[2025-08-09 00:29:02] Watching for Portal permission dialogs... Press Ctrl+C to stop.
+[2025-08-09 00:29:06] Found GNOME dialog: Remote Desktop (ID: 2176466517, Focus: yes)
+[2025-08-09 00:29:06] Accepting GNOME Portal permission dialog
+[2025-08-09 00:29:06] Pressing down keys: ['28:1'], up keys: ['28:0']
+[2025-08-09 00:29:06] Pressing down keys: ['56:1', '31:1'], up keys: ['31:0', '56:0']
+```
+
 ## About
 
 This project is a peaceful protest against the new Portal permission dialogs for input capture and remote desktop, which can be found on Wayland desktops.
