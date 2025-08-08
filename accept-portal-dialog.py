@@ -63,12 +63,17 @@ def ensure_ydotoold():
         return
     
     log("Starting yDoTool daemon...")
-    subprocess.run(
-        ["sudo", "-b", "ydotoold",
-        "--socket-path", YDOTOOL_SOCKET,
-         f"--socket-own={os.getuid()}:{os.getgid()}"],
-        check=True
-    )
+    try:
+        subprocess.run(
+            ["sudo", "-b", "ydotoold",
+            "--socket-path", YDOTOOL_SOCKET,
+            f"--socket-own={os.getuid()}:{os.getgid()}"],
+            check=True
+        )
+    except subprocess.CalledProcessError as e:
+        log(f"Failed to start yDoTool daemon, check if it's installed")
+        log(f"Error: {e}")
+        exit(1)
 
     while not sock_path.exists():
         log("Waiting for yDoTool daemon to start...")
