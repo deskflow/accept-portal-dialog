@@ -1,6 +1,6 @@
 # accept-portal-dialog
 
-Automatically accept Portal dialogs for input capture and remote control
+Automatically accept Portal dialogs for input capture and remote control.
 
 ## Desktops
 
@@ -25,3 +25,8 @@ The long-term goal for this project is for it to become obsolete once KDE and GN
 
 <img width="622" height="422" alt="image" src="https://github.com/user-attachments/assets/2f777c12-9a55-4d5f-8f3b-4af4740fcb4d" />
 <img width="782" height="622" alt="image" src="https://github.com/user-attachments/assets/7f1eeb02-e816-46dd-b1db-47139523cb90" />
+<img width="612" height="439" alt="image" src="https://github.com/user-attachments/assets/b8cc1cfa-3f3c-4325-a291-2f73670660ce" />
+<img width="654" height="333" alt="image" src="https://github.com/user-attachments/assets/18195a03-db2a-487c-8f1c-d74b2482aaf5" />
+
+
+
