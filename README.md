@@ -2,7 +2,7 @@
 
 Automatically accept Portal dialogs for input capture and remote control.
 
-## Desktops
+## Setup
 
 ### GNOME
 
@@ -14,6 +14,12 @@ GNOME requires you to enable unsafe mode:
 ### KDE
 
 Just run the script.
+
+### Run
+
+```
+./accept-portal-dialog.py
+```
 
 ## About
 
