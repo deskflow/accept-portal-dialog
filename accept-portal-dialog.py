@@ -11,7 +11,8 @@ from pathlib import Path
 
 KDE_DIALOG_TITLES = [
     "Input capture requested",
-    "Remote control requested"
+    "Remote control requested",
+    "請求遠端控制權限"
 ]
 
 GNOME_DIALOG_TITLES = [
@@ -32,7 +33,7 @@ YDOTOOL_S_KEY = 31
 
 def kde_accept_dialog():
     # On KDE, the dialog gives permission by default, so we just need to accept.
-    press_keys(YDOTOOL_LEFT_ALT_KEY, YDOTOOL_S_KEY)
+    press_keys(YDOTOOL_ENTER_KEY)
 
 def gnome_accept_dialog():
     # On GNOME, the permission toggle is off by default, so press Enter to accept.
