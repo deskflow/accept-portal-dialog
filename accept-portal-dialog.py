@@ -277,9 +277,11 @@ def config():
             "check_interval": str(CHECK_INTERVAL),
         }
 
-        # On KDE, the permission toggle is on by default, so simply press Enter to accept.
-        # Instead of Enter, an alternative approach could be to use Alt+S (56, 31):
-        #   ','.join(map(str, [YDOTOOL_LEFT_ALT_KEY, YDOTOOL_S_KEY]))
+        alt_s = ",".join(map(str, [YDOTOOL_LEFT_ALT_KEY, YDOTOOL_S_KEY]))
+
+        # On KDE, the permission toggle is on by default, so simply accept.
+        # Alt+S is perhaps a bit safer than Enter, but won't work for i18n;
+        # in this case the user would need to change the config file to use Enter (code 28).
         _config["kde"] = {
             "dialog_titles": ",".join(
                 [
@@ -287,12 +289,12 @@ def config():
                     "Remote control requested",
                 ]
             ),
-            "accept_sequence_0": YDOTOOL_ENTER_KEY,
+            "accept_sequence_0": alt_s,
         }
 
         # GNOME takes a split second to enable the dialog accept button.
-        # Instead of Tab then Enter, an alternative approach could be to use Alt+S (56, 31):
-        #   ','.join(map(str, [YDOTOOL_LEFT_ALT_KEY, YDOTOOL_S_KEY]))
+        # Different dialogs seem to have different tab orders, so use Alt+S which
+        # is the common shortcut for "Accept" in GNOME dialogs.
         _config["gnome"] = {
             "dialog_titles": ",".join(
                 [
@@ -302,9 +304,7 @@ def config():
             ),
             "accept_sequence_0": YDOTOOL_ENTER_KEY,
             "accept_sequence_1": "<sleep>",
-            "accept_sequence_2": YDOTOOL_TAB_KEY,
-            "accept_sequence_3": YDOTOOL_TAB_KEY,
-            "accept_sequence_4": YDOTOOL_ENTER_KEY,
+            "accept_sequence_2": alt_s,
         }
 
         with open(CONFIG_FILE, "w") as f:
