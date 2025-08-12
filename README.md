@@ -78,7 +78,7 @@ Example to change the accept key sequence to Enter on KDE for i18n:
 accept_sequence_0 = 28
 ```
 
-The numbers are `ydotool` compatible key codes (`56` is `Alt`, and `31` is `S`).
+The numbers are `ydotool` compatible key codes (e.g. `28` is Enter, `56` is `Alt`, and `31` is `S`, etc).
 
 ## Demo
 
