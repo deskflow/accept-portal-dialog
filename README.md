@@ -72,10 +72,10 @@ Example for Chinese users who want to accept the 'Input capture' dialog on KDE:
 dialog_titles = 請求遠端控制權限
 ```
 
-Example to change the key sequence to Alt+S on KDE:
+Example to change the accept key sequence to Enter on KDE for i18n:
 ```
 [kde]
-accept_sequence_0 = 56,31
+accept_sequence_0 = 28
 ```
 
 The numbers are `ydotool` compatible key codes (`56` is `Alt`, and `31` is `S`).
