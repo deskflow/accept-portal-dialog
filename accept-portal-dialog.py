@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+# Deskflow -- mouse and keyboard sharing utility
+# SPDX-License-Identifier: GPL-2.0-only WITH LicenseRef-OpenSSL-Exception
+# SPDX-FileCopyrightText: 2025 Symless Ltd.
+
+# This script accepts Portal permission dialogs in GNOME and KDE desktops using yDoTool.
+#
+# Warning: The key sequence configs are the most fragile part!
+#
+# You may need to edit the config file to change the key sequences for accepting the dialogs,
+# especially if you use a different keyboard layout or if the dialog design changes. Portal
+# permission dialogs differ slightly in design with things like tab order, especially in GNOME.
+
 import time
 import subprocess
 import os
@@ -11,10 +23,6 @@ from datetime import datetime
 from pathlib import Path
 
 _config = configparser.ConfigParser()
-
-# Warning: The accept dialog functions are the most fragile part!
-# It may change in future when the Portal devs change the UI design for the Portal permission dialog.
-# e.g. If they add new controls, change the tab order, etc. we'll need to change what keys we press here.
 
 
 def press_key_sequence(config_section):
@@ -65,6 +73,8 @@ def kde_find_and_accept():
         for window_id in kde_search_window(title):
             kde_ensure_window_focus(window_id)
 
+            sleep_before_sequence()
+
             log(f"Accepting KDE Portal permission dialog")
             press_key_sequence("kde")
 
@@ -103,8 +113,11 @@ def gnome_check_shell_eval():
         ok, result = gnome_shell_eval("1+1")
         if ok and result == 2:
             return True
-        else:
+        elif result:
             log(f"GNOME shell eval returned unexpected result: {result}")
+            return False
+        else:
+            log("GNOME shell eval returned no result")
             return False
     except Exception as e:
         log(f"Error checking GNOME shell eval: {e}")
@@ -139,6 +152,10 @@ def gnome_activate_window(window_id):
 
 def gnome_find_and_accept():
     if not gnome_check_shell_eval():
+        print(
+            "\nHint: Enable GNOME unsafe mode to use shell eval:"
+            "\n    Alt+F2 → lg → global.context.unsafe_mode = true\n"
+        )
         raise RuntimeError(
             "Unable to use shell eval, check GNOME unsafe mode is enabled."
         )
@@ -176,8 +193,16 @@ def gnome_find_and_accept():
             log(f"Activating GNOME dialog: {title}")
             gnome_activate_window(id)
 
+        sleep_before_sequence()
+
         log(f"Accepting GNOME Portal permission dialog")
         press_key_sequence("gnome")
+
+
+def sleep_before_sequence():
+    SEQUENCE_START_DELAY = _config.getfloat("program", "sequence_start_delay")
+    log(f"Waiting {SEQUENCE_START_DELAY} seconds before accepting dialog")
+    time.sleep(SEQUENCE_START_DELAY)
 
 
 def ensure_ydotoold():
@@ -263,11 +288,11 @@ def config():
     # Wait after detecting a dialog before starting the key sequence.
     # This is to allow the user to see the dialog to reduce the security risk.
     # Any longer, and the user will likely get impatient and click the dialog manually.
-    SEQUENCE_START_DELAY = 2
+    SEQUENCE_START_DELAY = 0.5
 
     # How long to wait between key presses in the sequence when <sleep> is used.
     # This is to allow the GUI to animate properly, especially in GNOME.
-    SEQUENCE_KEY_SLEEP = 0.1
+    SEQUENCE_KEY_SLEEP = 0.5
 
     YDOTOOL_TAB_KEY = 15
     YDOTOOL_ENTER_KEY = 28
@@ -321,6 +346,16 @@ def config():
     else:
         log(f"Using existing config file: {CONFIG_FILE}")
         _config.read(CONFIG_FILE)
+        for key in ["sequence_key_sleep", "check_interval", "sequence_start_delay"]:
+
+            # Any less than 0.5 seconds is likely too low for GUI animations to complete.
+            MIN_SLEEP = 0.5
+            if _config.getfloat("program", key) <= MIN_SLEEP:
+                value = _config.getfloat("program", key)
+                log(
+                    f"Warning: {key} value {value} is below recommended min: {MIN_SLEEP}"
+                )
+                continue
 
 
 def main():
@@ -333,7 +368,7 @@ def main():
         log("Watching for Portal permission dialogs... Press Ctrl+C to stop.")
         while True:
             accept_dialogs()
-            time.sleep(_config.getint("program", "check_interval"))
+            time.sleep(_config.getfloat("program", "check_interval"))
     except KeyboardInterrupt:
         log("Stopped watching.")
 
