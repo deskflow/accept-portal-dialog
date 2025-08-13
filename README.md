@@ -104,6 +104,9 @@ accept_sequence_5 = 28
 
 You may need to remove a tab depending on the dialog title (e.g. remote desktop or input capture).
 
+The `<sleep>` is necessary on GNOME, as it takes a moment for the GUI to do some fancy animation
+after toggling the switch to enabled.
+
 ## Demo
 
 ```
