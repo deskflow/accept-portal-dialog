@@ -18,10 +18,6 @@ _config = configparser.ConfigParser()
 
 
 def press_key_sequence(config_section):
-    """
-    Press a sequence of keys, where each key is a string.
-    The sequence can include special items like "<sleep>" to pause for 0.1 seconds.
-    """
     for i in range(10):
         sequence_name = f"accept_sequence_{i}"
         if not _config.has_option(config_section, sequence_name):
@@ -31,8 +27,9 @@ def press_key_sequence(config_section):
 
         if sequence == "<sleep>":
             log(f"Sleep sequence: {config_section} → {sequence_name}: {sequence}")
-            log("Sleeping for 0.1 seconds")
-            time.sleep(0.1)
+            SEQUENCE_KEY_SLEEP = _config.getfloat("program", "sequence_key_sleep")
+            log(f"Sleeping for {SEQUENCE_KEY_SLEEP} seconds")
+            time.sleep(SEQUENCE_KEY_SLEEP)
             continue
 
         log(f"Pressing key sequence {config_section} → {sequence_name}: {sequence}")
@@ -260,7 +257,17 @@ def config():
     # TODO: Use the XDG_CONFIG_HOME env var if set.
     CONFIG_FILE = Path.home() / ".config" / "accept-portal-dialog" / "config.ini"
 
-    CHECK_INTERVAL = 2  # seconds
+    # Check very frequently for new dialogs to start the sequence delay as soon as possible.
+    CHECK_INTERVAL = 0.5
+
+    # Wait after detecting a dialog before starting the key sequence.
+    # This is to allow the user to see the dialog to reduce the security risk.
+    # Any longer, and the user will likely get impatient and click the dialog manually.
+    SEQUENCE_START_DELAY = 2
+
+    # How long to wait between key presses in the sequence when <sleep> is used.
+    # This is to allow the GUI to animate properly, especially in GNOME.
+    SEQUENCE_KEY_SLEEP = 0.1
 
     YDOTOOL_TAB_KEY = 15
     YDOTOOL_ENTER_KEY = 28
@@ -278,6 +285,8 @@ def config():
         _config["program"] = {
             "ydotoold_socket_path": str(YDOTOOL_SOCKET),
             "check_interval": str(CHECK_INTERVAL),
+            "sequence_start_delay": str(SEQUENCE_START_DELAY),
+            "sequence_key_sleep": str(SEQUENCE_KEY_SLEEP),
         }
 
         # On KDE, the permission toggle is on by default, so simply accept.
