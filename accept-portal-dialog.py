@@ -10,8 +10,6 @@ import configparser
 from datetime import datetime
 from pathlib import Path
 
-YDOTOOL_SOCKET = f"/run/user/{os.getuid()}/.ydotool_socket"
-
 _config = configparser.ConfigParser()
 
 # Warning: The accept dialog functions are the most fragile part!
@@ -186,7 +184,7 @@ def gnome_find_and_accept():
 
 
 def ensure_ydotoold():
-    # TODO: Use existing YDOTOOL_SOCKET env var if set.
+    YDOTOOL_SOCKET = _config.get("program", "ydotoold_socket_path")
     sock_path = Path(YDOTOOL_SOCKET)
     if sock_path.exists():
         log(f"Found yDoTool daemon, socket: {sock_path}")
@@ -256,7 +254,10 @@ def run(*args):
 
 def config():
 
-    # TODO: Use the XDG_CONFIG_HOME environment variable if set.
+    # TODO: Use existing YDOTOOL_SOCKET env var if set.
+    YDOTOOL_SOCKET = f"/run/user/{os.getuid()}/.ydotool_socket"
+
+    # TODO: Use the XDG_CONFIG_HOME env var if set.
     CONFIG_FILE = Path.home() / ".config" / "accept-portal-dialog" / "config.ini"
 
     CHECK_INTERVAL = 2  # seconds
