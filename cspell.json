@@ -12,7 +12,8 @@
     "kdotool",
     "windowactivate",
     "YDOTOOL",
-    "ydotoold"
+    "ydotoold",
+    "dbus"
   ],
   "ignoreWords": [],
   "import": []

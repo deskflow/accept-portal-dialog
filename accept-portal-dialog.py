@@ -380,26 +380,26 @@ def is_gnome_screen_locked():
         # Output: '(true,)' or '(false,)'
         return out.strip().startswith("(true")
     except Exception as e:
-        log(f"Could not check GNOME lock screen: {e}")
-        return False
+        raise RuntimeError("Could not check GNOME lock screen") from e
 
 
 def is_kde_screen_locked():
     try:
-        out = subprocess.check_output(
-            [
-                "qdbus",
-                "org.freedesktop.ScreenSaver",
-                "/ScreenSaver",
-                "org.freedesktop.ScreenSaver.GetActive",
-            ],
-            text=True,
+        import dbus
+
+    except ImportError:
+        raise RuntimeError("dbus-python is needed for KDE lock detection.")
+
+    try:
+        bus = dbus.SessionBus()
+        service = bus.get_object(
+            "org.freedesktop.ScreenSaver", "/org/freedesktop/ScreenSaver"
         )
-        # Output: 'true' or 'false'
-        return out.strip() == "true"
+        iface = dbus.Interface(service, "org.freedesktop.ScreenSaver")
+        locked = iface.GetActive()
+        return locked
     except Exception as e:
-        log(f"Could not check KDE lock screen: {e}")
-        return False
+        raise RuntimeError("Could not check KDE lock screen") from e
 
 
 def is_desktop_locked():
