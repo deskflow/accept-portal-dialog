@@ -186,7 +186,7 @@ def gnome_find_and_accept():
 
 
 def ensure_ydotoold():
-    # TOOD: Use existing YDOTOOL_SOCKET env var if set.
+    # TODO: Use existing YDOTOOL_SOCKET env var if set.
     sock_path = Path(YDOTOOL_SOCKET)
     if sock_path.exists():
         log(f"Found yDoTool daemon, socket: {sock_path}")
@@ -266,6 +266,8 @@ def config():
     YDOTOOL_LEFT_ALT_KEY = 56
     YDOTOOL_S_KEY = 31
 
+    ALT_S_SEQUENCE = ",".join(map(str, [YDOTOOL_LEFT_ALT_KEY, YDOTOOL_S_KEY]))
+
     if not CONFIG_FILE.parent.exists():
         log(f"Creating config directory: {CONFIG_FILE.parent}")
         CONFIG_FILE.parent.mkdir(parents=True)
@@ -277,11 +279,7 @@ def config():
             "check_interval": str(CHECK_INTERVAL),
         }
 
-        alt_s = ",".join(map(str, [YDOTOOL_LEFT_ALT_KEY, YDOTOOL_S_KEY]))
-
         # On KDE, the permission toggle is on by default, so simply accept.
-        # Alt+S is perhaps a bit safer than Enter, but won't work for i18n;
-        # in this case the user would need to change the config file to use Enter (code 28).
         _config["kde"] = {
             "dialog_titles": ",".join(
                 [
@@ -289,7 +287,7 @@ def config():
                     "Remote control requested",
                 ]
             ),
-            "accept_sequence_0": alt_s,
+            "accept_sequence_0": YDOTOOL_ENTER_KEY,
         }
 
         # GNOME takes a split second to enable the dialog accept button.
@@ -304,7 +302,7 @@ def config():
             ),
             "accept_sequence_0": YDOTOOL_ENTER_KEY,
             "accept_sequence_1": "<sleep>",
-            "accept_sequence_2": alt_s,
+            "accept_sequence_2": ALT_S_SEQUENCE,
         }
 
         with open(CONFIG_FILE, "w") as f:
