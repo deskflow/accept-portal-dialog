@@ -245,8 +245,10 @@ def accept_dialogs():
         gnome_find_and_accept()
     elif "KDE" in desktop:
         kde_find_and_accept()
-    else:
+    elif desktop:
         raise RuntimeError(f"Unsupported desktop: {desktop}")
+    else:
+        raise RuntimeError("XDG_CURRENT_DESKTOP environment variable is not set.")
 
 
 def log(msg):
@@ -308,6 +310,7 @@ def config():
     if not CONFIG_FILE.exists():
         log(f"Creating config file: {CONFIG_FILE}")
         _config["program"] = {
+            "verbose_logging": "false",
             "ydotoold_socket_path": str(YDOTOOL_SOCKET),
             "check_interval": str(CHECK_INTERVAL),
             "sequence_start_delay": str(SEQUENCE_START_DELAY),
@@ -358,6 +361,63 @@ def config():
                 continue
 
 
+def is_gnome_screen_locked():
+    try:
+        out = subprocess.check_output(
+            [
+                "gdbus",
+                "call",
+                "--session",
+                "--dest",
+                "org.gnome.ScreenSaver",
+                "--object-path",
+                "/org/gnome/ScreenSaver",
+                "--method",
+                "org.gnome.ScreenSaver.GetActive",
+            ],
+            text=True,
+        )
+        # Output: '(true,)' or '(false,)'
+        return out.strip().startswith("(true")
+    except Exception as e:
+        log(f"Could not check GNOME lock screen: {e}")
+        return False
+
+
+def is_kde_screen_locked():
+    try:
+        out = subprocess.check_output(
+            [
+                "qdbus",
+                "org.freedesktop.ScreenSaver",
+                "/ScreenSaver",
+                "org.freedesktop.ScreenSaver.GetActive",
+            ],
+            text=True,
+        )
+        # Output: 'true' or 'false'
+        return out.strip() == "true"
+    except Exception as e:
+        log(f"Could not check KDE lock screen: {e}")
+        return False
+
+
+def is_desktop_locked():
+    desktop = os.environ.get("XDG_CURRENT_DESKTOP", "")
+    if "GNOME" in desktop:
+        return is_gnome_screen_locked()
+    elif "KDE" in desktop:
+        return is_kde_screen_locked()
+    elif desktop:
+        raise RuntimeError(f"Unsupported desktop: {desktop}")
+    else:
+        raise RuntimeError("XDG_CURRENT_DESKTOP environment variable is not set.")
+
+
+def is_verbose():
+    return _config.getboolean("program", "verbose_logging", fallback=False)
+
+
 def main():
     config()
 
@@ -367,7 +427,11 @@ def main():
 
         log("Watching for Portal permission dialogs... Press Ctrl+C to stop.")
         while True:
-            accept_dialogs()
+            if not is_desktop_locked():
+                accept_dialogs()
+            elif is_verbose():
+                log("Desktop is locked, skipping dialog checks.")
+
             time.sleep(_config.getfloat("program", "check_interval"))
     except KeyboardInterrupt:
         log("Stopped watching.")
