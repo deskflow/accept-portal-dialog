@@ -79,6 +79,7 @@ def kde_find_and_accept():
             press_key_sequence("kde")
 
 
+# TODO: Use Python dbus instead of gdbus.
 def gnome_shell_eval(value):
     try:
         out = subprocess.check_output(
@@ -361,6 +362,7 @@ def config():
                 continue
 
 
+# TODO: Use Python dbus instead of gdbus.
 def is_gnome_screen_locked():
     try:
         out = subprocess.check_output(
