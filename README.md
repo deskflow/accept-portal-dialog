@@ -28,11 +28,14 @@ Once the fix is complete in Portal and it becomes ubiquitous, this project will 
 
 ## What people say
 
-The Linux community is divided on this tool, and opinions about it are mixed:
+The Linux community is divided on this tool, and opinions about it are mixed.
 
-> Security implications aside, this is a bad idea in itself. -- [Reddit user](https://www.reddit.com/r/linux/comments/1mlxgiv/comment/n7tl9db/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button)
+One [Reddit user](https://www.reddit.com/r/linux/comments/1mlxgiv/comment/n7tl9db/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button) says:
+> Security implications aside, this is a bad idea in itself.
 
-> I believe this program wouldn't exist if the actual end-user implementations were well done enough. -- [Reddit user](https://www.reddit.com/r/linux/comments/1mlxgiv/comment/n7uejfz/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button)
+But, on the other hand:
+> I believe this program wouldn't exist if the actual end-user implementations were well done enough.
+> -- [Reddit user](https://www.reddit.com/r/linux/comments/1mlxgiv/comment/n7uejfz/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button)
 
 ## Tool setup
 
