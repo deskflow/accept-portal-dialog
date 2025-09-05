@@ -11,6 +11,19 @@ Automatically accept Portal dialogs for Input Capture and Remote Control/Desktop
 >
 > Once that's done, we can archive this project.
 
+## Demo
+
+```
+$ accept-portal-dialog
+[2025-08-09 00:29:02] Checking for yDoTool daemon...
+[2025-08-09 00:29:02] Found yDoTool daemon, socket: /run/user/1000/.ydotool_socket
+[2025-08-09 00:29:02] Watching for Portal permission dialogs... Press Ctrl+C to stop.
+[2025-08-09 00:29:06] Found GNOME dialog: Remote Desktop (ID: 2176466517, Focus: yes)
+[2025-08-09 00:29:06] Accepting GNOME Portal permission dialog
+[2025-08-09 00:29:06] Pressing down keys: ['28:1'], up keys: ['28:0']
+[2025-08-09 00:29:06] Pressing down keys: ['56:1', '31:1'], up keys: ['31:0', '56:0']
+```
+
 ## Who's this for?
 
 This tool was born out of frustration with the Portal permission dialogs:
@@ -57,6 +70,8 @@ GNOME requires you to enable unsafe mode:
 1. Press Alt+F2
 2. Enter: `lg`
 3. Run: `global.context.unsafe_mode = true`
+
+You can also create an extension (see below) to do this automatically.
 
 ### KDE
 
@@ -123,18 +138,55 @@ You may need to remove a tab depending on the dialog title (e.g. remote desktop 
 The `<sleep>` is necessary on GNOME, as it takes a moment for the GUI to do some fancy animation
 after toggling the switch to enabled.
 
-## Demo
+## GNOME Unsafe Extension
 
+> [!WARNING]
+> Do not do this unless you really know what you're doing; it's very unsafe and should only be done by experts.
+
+Doing 'Alt+F2 → lg → global.context.unsafe_mode = true' every time you login is a pain.
+
+To avoid having to do this, create an extension.
+
+`mkdir -p ~/.local/share/gnome-shell/extensions/unsafe-mode@local`
+
+`metadata.json`
+```json
+{
+  "uuid": "unsafe-mode@local",
+  "name": "Unsafe Mode Enabler",
+  "description": "Sets global.context.unsafe_mode to true at session start.",
+  "version": 1,
+  "shell-version": ["47"]
+}
 ```
-$ accept-portal-dialog
-[2025-08-09 00:29:02] Checking for yDoTool daemon...
-[2025-08-09 00:29:02] Found yDoTool daemon, socket: /run/user/1000/.ydotool_socket
-[2025-08-09 00:29:02] Watching for Portal permission dialogs... Press Ctrl+C to stop.
-[2025-08-09 00:29:06] Found GNOME dialog: Remote Desktop (ID: 2176466517, Focus: yes)
-[2025-08-09 00:29:06] Accepting GNOME Portal permission dialog
-[2025-08-09 00:29:06] Pressing down keys: ['28:1'], up keys: ['28:0']
-[2025-08-09 00:29:06] Pressing down keys: ['56:1', '31:1'], up keys: ['31:0', '56:0']
+
+`extension.js`
+```js
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+
+export default class UnsafeModeExtension extends Extension {
+  enable() {
+    try {
+      if (global && global.context && 'unsafe_mode' in global.context) {
+        global.context.unsafe_mode = true;
+        console.log('[unsafe-mode] unsafe_mode set to true');
+      } else {
+        console.error('[unsafe-mode] global.context.unsafe_mode not found');
+      }
+    } catch (e) {
+      console.error('[unsafe-mode] failed to set unsafe_mode:', e);
+    }
+  }
+
+  disable() {
+    // Optional: flip it back
+    // if (global && global.context && 'unsafe_mode' in global.context)
+    //   global.context.unsafe_mode = false;
+  }
+}
 ```
+
+**Important:** On Wayland, you'll need to log out and log back in to load the extension.
 
 ## Dialogs
 
