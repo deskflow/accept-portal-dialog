@@ -3,16 +3,9 @@
 Automatically accept Portal dialogs for Input Capture and Remote Control/Desktop.
 
 > [!IMPORTANT]
-> 🎉 For Deskflow, this tool is now redundant for Remote Desktop/Control portal permission!
-> See: https://github.com/deskflow/deskflow/pull/8865
->
-> 🎉 Input Capture portal token support had been implemented:
-> https://github.com/flatpak/xdg-desktop-portal/pull/1898
->
-> 🕐 We're still working on implementing it in Deskflow:
-> https://github.com/deskflow/deskflow/pull/9415
->
-> Once that's done, we can archive this project.
+> 🎉 For Deskflow and Synergy, thanks to @whot, this tool is now redundant:
+> - Remote Desktop: https://github.com/deskflow/deskflow/pull/8865
+> - Input Capture: https://github.com/deskflow/deskflow/pull/9415
 
 ## Demo
 
